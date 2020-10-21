@@ -1,0 +1,62 @@
+---
+
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    -
+      cron: '0 1 * * *'
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: lint
+        uses: reviewdog/action-golangci-lint@v1
+  test:
+    strategy:
+      matrix:
+        go_version:
+          - 1.14.x
+          - 1.15.x
+        os:
+          - ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go_version }}
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ matrix.go_version }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-${{ matrix.go_version }}
+      - name: test
+        run: go test ./...
+  release:
+    if: github.ref == 'refs/heads/main'
+    needs:
+      - test
+      - lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+      - run: |
+          npx semantic-release --debug \
+            --plugins @semantic-release/commit-analyzer \
+            --plugins @semantic-release/relesae-notes-generator \
+            --plugins @semantic-release/github
