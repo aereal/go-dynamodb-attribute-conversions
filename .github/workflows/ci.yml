@@ -58,5 +58,5 @@ jobs:
       - run: |
           npx semantic-release --debug \
             --plugins @semantic-release/commit-analyzer \
-            --plugins @semantic-release/relesae-notes-generator \
+            --plugins @semantic-release/release-notes-generator \
             --plugins @semantic-release/github
