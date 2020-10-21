@@ -36,3 +36,20 @@ func TestAttributeValueFrom(t *testing.T) {
 		})
 	}
 }
+
+func TestAttributeValueMapFrom(t *testing.T) {
+	tests := []struct {
+		name string
+		from map[string]events.DynamoDBAttributeValue
+		want map[string]*dynamodb.AttributeValue
+	}{
+		{"ok", map[string]events.DynamoDBAttributeValue{"bool": events.NewBooleanAttribute(true), "string": events.NewStringAttribute("a")}, map[string]*dynamodb.AttributeValue{"bool": {BOOL: aws.Bool(true)}, "string": {S: aws.String("a")}}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := AttributeValueMapFrom(tt.from); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("AttributeValueMapFrom() = %#v, want %#v", got, tt.want)
+			}
+		})
+	}
+}

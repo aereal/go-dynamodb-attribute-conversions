@@ -50,3 +50,11 @@ func AttributeValueFrom(from events.DynamoDBAttributeValue) *dynamodb.AttributeV
 	}
 	return av
 }
+
+func AttributeValueMapFrom(from map[string]events.DynamoDBAttributeValue) map[string]*dynamodb.AttributeValue {
+	result := map[string]*dynamodb.AttributeValue{}
+	for k, v := range from {
+		result[k] = AttributeValueFrom(v)
+	}
+	return result
+}
