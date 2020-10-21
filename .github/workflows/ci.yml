@@ -57,6 +57,7 @@ jobs:
             ${{ runner.os }}-npm-
       - run: |
           npx semantic-release --debug \
+            --branches main \
             --plugins @semantic-release/commit-analyzer \
             --plugins @semantic-release/release-notes-generator \
             --plugins @semantic-release/github
