@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
+// AttributeValueFrom converts from events.DynamoDBAttributeValue to dynamodb.AttributeValue
 func AttributeValueFrom(from events.DynamoDBAttributeValue) *dynamodb.AttributeValue {
 	av := &dynamodb.AttributeValue{}
 	switch from.DataType() {
@@ -51,6 +52,7 @@ func AttributeValueFrom(from events.DynamoDBAttributeValue) *dynamodb.AttributeV
 	return av
 }
 
+// AttributeValueMapFrom converts from events.DynamoDBAttributeValuemap to dynamodb.AttributeValue map
 func AttributeValueMapFrom(from map[string]events.DynamoDBAttributeValue) map[string]*dynamodb.AttributeValue {
 	result := map[string]*dynamodb.AttributeValue{}
 	for k, v := range from {
