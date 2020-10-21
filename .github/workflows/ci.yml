@@ -61,3 +61,5 @@ jobs:
             --plugins @semantic-release/commit-analyzer \
             --plugins @semantic-release/release-notes-generator \
             --plugins @semantic-release/github
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
