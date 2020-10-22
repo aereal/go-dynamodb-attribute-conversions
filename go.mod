@@ -1,4 +1,4 @@
-module github.com/aereal/go-dynamodb-conversions
+module github.com/aereal/go-dynamodb-attribute-conversions
 
 go 1.15
 
