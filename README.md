@@ -4,7 +4,7 @@
 # go-dynamodb-attribute-conversions
 
 ```sh
-go get github.com/aereal/go-dynamodb-attribute-conversions
+go get github.com/aereal/go-dynamodb-attribute-conversions/v2
 ```
 
 ## Usage
@@ -13,9 +13,9 @@ go get github.com/aereal/go-dynamodb-attribute-conversions
 import (
   "context"
 
-  "github.com/aereal/go-dynamodb-attribute-conversions"
+  "github.com/aereal/go-dynamodb-attribute-conversions/v2"
   "github.com/aws/aws-lambda-go/events"
-  "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+  "github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 )
 
 func handler(ctx context.Context, event events.DynamoDBEvent) error {
@@ -25,7 +25,7 @@ func handler(ctx context.Context, event events.DynamoDBEvent) error {
       Bool bool
       Str string
     }
-    dynamodbattribute.UnmarshalMap(m, &item)
+    attributevalue.UnmarshalMap(m, &item)
   }
   return nil
 }
