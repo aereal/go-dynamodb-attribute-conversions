@@ -1,60 +1,62 @@
 package ddbconversions
 
 import (
+	"errors"
+
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
 // AttributeValueFrom converts from events.DynamoDBAttributeValue to dynamodb.AttributeValue
-func AttributeValueFrom(from events.DynamoDBAttributeValue) *dynamodb.AttributeValue {
-	av := &dynamodb.AttributeValue{}
+func AttributeValueFrom(from events.DynamoDBAttributeValue) types.AttributeValue {
 	switch from.DataType() {
 	case events.DataTypeBinary:
-		av.SetB(from.Binary())
+		return &types.AttributeValueMemberB{Value: from.Binary()}
 	case events.DataTypeBinarySet:
-		av.SetBS(from.BinarySet())
+		return &types.AttributeValueMemberBS{Value: from.BinarySet()}
 	case events.DataTypeBoolean:
-		av.SetBOOL(from.Boolean())
+		return &types.AttributeValueMemberBOOL{Value: from.Boolean()}
 	case events.DataTypeList:
-		vs := []*dynamodb.AttributeValue{}
+		vs := &types.AttributeValueMemberL{}
 		for _, v := range from.List() {
 			lv := AttributeValueFrom(v)
-			vs = append(vs, lv)
+			vs.Value = append(vs.Value, lv)
 		}
-		av.SetL(vs)
+		return vs
 	case events.DataTypeMap:
-		mv := map[string]*dynamodb.AttributeValue{}
+		mv := &types.AttributeValueMemberM{Value: map[string]types.AttributeValue{}}
 		for k, v := range from.Map() {
-			mv[k] = AttributeValueFrom(v)
+			mv.Value[k] = AttributeValueFrom(v)
 		}
-		av.SetM(mv)
+		return mv
 	case events.DataTypeNull:
-		av.SetNULL(from.IsNull())
+		return &types.AttributeValueMemberNULL{Value: from.IsNull()}
 	case events.DataTypeNumber:
-		av.SetN(from.Number())
+		return &types.AttributeValueMemberN{Value: from.Number()}
 	case events.DataTypeNumberSet:
-		var ns []*string
+		ns := &types.AttributeValueMemberNS{}
 		for _, v := range from.NumberSet() {
 			n := v
-			ns = append(ns, &n)
+			ns.Value = append(ns.Value, n)
 		}
-		av.SetNS(ns)
+		return ns
 	case events.DataTypeString:
-		av.SetS(from.String())
+		return &types.AttributeValueMemberS{Value: from.String()}
 	case events.DataTypeStringSet:
-		var ss []*string
+		ss := &types.AttributeValueMemberSS{}
 		for _, v := range from.StringSet() {
 			s := v
-			ss = append(ss, &s)
+			ss.Value = append(ss.Value, s)
 		}
-		av.SetSS(ss)
+		return ss
+	default:
+		panic(errors.New("unknown type"))
 	}
-	return av
 }
 
 // AttributeValueMapFrom converts from events.DynamoDBAttributeValuemap to dynamodb.AttributeValue map
-func AttributeValueMapFrom(from map[string]events.DynamoDBAttributeValue) map[string]*dynamodb.AttributeValue {
-	result := map[string]*dynamodb.AttributeValue{}
+func AttributeValueMapFrom(from map[string]events.DynamoDBAttributeValue) map[string]types.AttributeValue {
+	result := map[string]types.AttributeValue{}
 	for k, v := range from {
 		result[k] = AttributeValueFrom(v)
 	}
