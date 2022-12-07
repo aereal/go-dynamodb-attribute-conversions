@@ -4,8 +4,8 @@ go 1.17
 
 require (
 	github.com/aws/aws-lambda-go v1.34.1
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.6
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.8
 	github.com/google/go-cmp v0.5.9
 )
 
-require github.com/aws/smithy-go v1.13.4 // indirect
+require github.com/aws/smithy-go v1.13.5 // indirect
