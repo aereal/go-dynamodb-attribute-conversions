@@ -1,6 +1,6 @@
 module github.com/aereal/go-dynamodb-attribute-conversions/v2
 
-go 1.17
+go 1.19
 
 require (
 	github.com/aws/aws-lambda-go v1.36.0
